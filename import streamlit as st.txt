@@ -1,0 +1,54 @@
+import streamlit as st
+from openai import OpenAI
+import os
+
+# Configurar cliente
+client = OpenAI(api_key=os.getenv("sk-...2XoA"))
+
+st.title("PLATINUM — Assistente Inteligente 💬")
+st.header("Para sua felicidade")
+
+st.text("""== LISTA DE TRABALHO ==
+1) gp1 = R$40 (2h)
+2) gp2 = R$35 (3h)
+3) gp3 = R$50 (1h)
+4) gp4 = R$80 (5h)
+""")
+
+# Entrada do usuário
+preço = st.text_input("Digite sua opção (gp1, gp2, gp3 ou gp4):")
+
+# Condicionais simples
+if preço:
+    preço = preço.lower().strip()
+
+    if preço == "gp1":
+        resposta = "Você escolheu gp1 — R$40, 2 horas."
+    elif preço == "gp2":
+        resposta = "Você escolheu gp2 — R$35, 3 horas."
+    elif preço == "gp3":
+        resposta = "Você escolheu gp3 — R$50, 1 hora."
+    elif preço == "gp4":
+        resposta = "Você escolheu gp4 — R$80, 5 horas."
+    else:
+        resposta = "Opção inválida. Digite gp1, gp2, gp3 ou gp4."
+
+    st.write(resposta)
+
+# === 🔮 AGENTE DE IA ===
+st.subheader("Converse com o assistente inteligente 🧠")
+
+pergunta = st.text_area("Pergunte algo sobre os serviços:")
+
+if st.button("Perguntar à IA"):
+    if pergunta.strip() != "":
+        with st.spinner("Pensando..."):
+            chat = client.chat.completions.create(
+                model="gpt-4o-mini",  # ou gpt-4o, gpt-5, etc
+                messages=[
+                    {"role": "system", "content": "Você é um assistente da empresa PLATINUM que ajuda clientes a escolher serviços."},
+                    {"role": "user", "content": pergunta},
+                ]
+            )
+            resposta_ia = chat.choices[0].message.content
+            st.success(resposta_ia)
